@@ -96,7 +96,7 @@ app.put('/update_bus', async (req, res) => {
 });
 
 app.delete('/delete_bus', async (req, res) => {
-    const { id } = req.body;
+    const { id } = req.query;
     if (!id) {
         return res.status(400).json({ error: "Bus ID is required" });
     }
@@ -167,6 +167,7 @@ app.get('/busName', async (req, res) => {
 
 app.get('/from-to', async (req, res) => {
     const { from, to } = req.query;
+
     if (!from || !to) {
         return res.status(400).json({ error: "Something is missing, from or to" });
     }
