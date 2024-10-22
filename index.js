@@ -64,7 +64,7 @@ app.post('/add_bus', async (req, res) => {
 
     try {
         const newBus = await BUS_SCHEMA.create(busDetails);
-        res.status(201).json({ message: "Bus added successfully", bus: newBus });
+        res.status(201).json({ message: true, bus: newBus });
     } catch (error) {
         console.error("Error adding bus:", error);
         res.status(500).json({ error: "Failed to add bus" });
