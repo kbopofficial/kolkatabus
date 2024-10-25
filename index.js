@@ -43,12 +43,12 @@ app.use(bodyParser.json());
 
 const auth = (req, res, next) => {
     try {
-   
-        const authHeader = req.headers['authorization']; 
+
+        const authHeader = req.headers['authorization'];
 
         if (!authHeader) {
             return res.status(401).json({ error: 'Authorization header missing' });
-        }else if (authHeader!=process.env.SECRET_KEY){
+        } else if (authHeader != process.env.SECRET_KEY) {
 
             return res.status(401).json({ error: 'Incorrect authorization header' });
         }
@@ -59,7 +59,9 @@ const auth = (req, res, next) => {
     }
 };
 
-app.get('/all_bus',auth, async (req, res) => {
+app.use(auth)
+
+app.get('/all_bus', async (req, res) => {
     try {
         const findBus = await BUS_SCHEMA.find();
         if (findBus.length === 0) {
@@ -73,7 +75,7 @@ app.get('/all_bus',auth, async (req, res) => {
 
 });
 
-app.post('/add_bus',auth, async (req, res) => {
+app.post('/add_bus', async (req, res) => {
     const busDetails = req.body;
 
 
@@ -91,7 +93,7 @@ app.post('/add_bus',auth, async (req, res) => {
 });
 
 
-app.put('/update_bus',auth, async (req, res) => {
+app.put('/update_bus', async (req, res) => {
     const { id, ...busDetails } = req.body;
     if (!id) {
         return res.status(400).json({ error: "Bus ID is required" });
@@ -114,7 +116,7 @@ app.put('/update_bus',auth, async (req, res) => {
     }
 });
 
-app.delete('/delete_bus',auth, async (req, res) => {
+app.delete('/delete_bus', async (req, res) => {
     const { id } = req.query;
     if (!id) {
         return res.status(400).json({ error: "Bus ID is required" });
@@ -134,7 +136,7 @@ app.delete('/delete_bus',auth, async (req, res) => {
 });
 
 
-app.get('/via_bus',auth, async (req, res) => {
+app.get('/via_bus', async (req, res) => {
     const { via } = req.query;
     if (!via) {
         return res.status(400).json({ error: "Via route is required" });
@@ -167,7 +169,7 @@ app.get('/via_bus',auth, async (req, res) => {
     }
 });
 
-app.get('/busName',auth, async (req, res) => {
+app.get('/busName', async (req, res) => {
     const { busName } = req.query;
     if (!busName) {
         return res.status(400).json({ error: "Bus Name is required" });
@@ -184,7 +186,7 @@ app.get('/busName',auth, async (req, res) => {
     }
 });
 
-app.get('/from-to',auth, async (req, res) => {
+app.get('/from-to', async (req, res) => {
     const { from, to } = req.query;
 
     if (!from || !to) {
@@ -208,7 +210,7 @@ app.get('/from-to',auth, async (req, res) => {
     }
 });
 
-app.get('/busId',auth, async (req, res) => {
+app.get('/busId', async (req, res) => {
     const { id } = req.query;
     if (!id) {
         return res.status(400).json({ error: "Bus ID is required" });
@@ -229,7 +231,7 @@ app.get('/busId',auth, async (req, res) => {
 
 
 //FOR Team
-app.get('/all_team_members',auth, async (req, res) => {
+app.get('/all_team_members', async (req, res) => {
 
     try {
         const team = await TEAM_SCHEMA.find()
@@ -242,7 +244,7 @@ app.get('/all_team_members',auth, async (req, res) => {
 });
 
 
-app.post('/add_team_member',auth, async (req, res) => {
+app.post('/add_team_member', async (req, res) => {
     const team_member_details = req.body;
     if (!team_member_details.name || !team_member_details.designation || !team_member_details.image_path) {
         return res.status(400).json({ error: "Missing required member details" });
@@ -258,7 +260,7 @@ app.post('/add_team_member',auth, async (req, res) => {
     }
 });
 
-app.put('/update_team_member',auth, async (req, res) => {
+app.put('/update_team_member', async (req, res) => {
     const { id, ...updateDetails } = req.body;
     if (!id) {
         return res.status(400).json({ error: "Team member ID is required" });
@@ -284,7 +286,7 @@ app.put('/update_team_member',auth, async (req, res) => {
 });
 
 
-app.delete('/delete_team_member',auth, async (req, res) => {
+app.delete('/delete_team_member', async (req, res) => {
     const { id } = req.query;
 
     if (!id) {
@@ -311,7 +313,7 @@ app.delete('/delete_team_member',auth, async (req, res) => {
 
 
 //FOR ADMIN
-app.get('/all_admin',auth, async (req, res) => {
+app.get('/all_admin', async (req, res) => {
 
     try {
         const local_admins = await ADMIN_SCHEMA.find()
@@ -327,7 +329,7 @@ app.get('/all_admin',auth, async (req, res) => {
     }
 });
 
-app.post('/add_admin',auth, async (req, res) => {
+app.post('/add_admin', async (req, res) => {
     const adminDetails = req.body;
 
     if (!adminDetails.name || !adminDetails.designation || !adminDetails.email_id) {
@@ -344,7 +346,7 @@ app.post('/add_admin',auth, async (req, res) => {
     }
 });
 
-app.delete('/delete_admin',auth, async (req, res) => {
+app.delete('/delete_admin', async (req, res) => {
     const { id } = req.query;
 
     if (!id) {
@@ -365,7 +367,7 @@ app.delete('/delete_admin',auth, async (req, res) => {
     }
 });
 
-app.put('/update_admin',auth, async (req, res) => {
+app.put('/update_admin', async (req, res) => {
     const { id, ...updateDetails } = req.body;
 
     if (!id) {
@@ -394,18 +396,18 @@ app.put('/update_admin',auth, async (req, res) => {
 
 
 //For News
-app.get('/all_news',auth, async (req, res) => {
-try {
-    let news=await NEWS_SCHEMA.find();
-    res.json(news)
+app.get('/all_news', async (req, res) => {
+    try {
+        let news = await NEWS_SCHEMA.find();
+        res.json(news)
 
-} catch (error) {
-    console.error("Error searching news :", error);
-    res.status(500).json({ error: "Error searching news" });
-}
+    } catch (error) {
+        console.error("Error searching news :", error);
+        res.status(500).json({ error: "Error searching news" });
+    }
 });
 
-app.post('/add_news',auth, async (req, res) => {
+app.post('/add_news', async (req, res) => {
     const newsDetails = req.body;
 
     if (!newsDetails.image_url || !newsDetails.url || !newsDetails.news) {
@@ -423,8 +425,8 @@ app.post('/add_news',auth, async (req, res) => {
 });
 
 
-app.put('/update_news',auth, async (req, res) => {
-    const {id,...updateDetails} = req.body; 
+app.put('/update_news', async (req, res) => {
+    const { id, ...updateDetails } = req.body;
 
     if (!id) {
         return res.status(400).json({ error: "News ID is required" });
@@ -449,8 +451,8 @@ app.put('/update_news',auth, async (req, res) => {
 });
 
 
-app.delete('/delete_news',auth, async (req, res) => {
-    const { id } = req.query; 
+app.delete('/delete_news', async (req, res) => {
+    const { id } = req.query;
     if (!id) {
         return res.status(400).json({ error: "News ID is required" });
     }
