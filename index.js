@@ -9,7 +9,7 @@ const ADMIN_SCHEMA = require('./Model/Admin')
 const TEAM_SCHEMA = require('./Model/Team_members')
 const BUS_SCHEMA = require('./Model/Bus_Model')
 const NEWS_SCHEMA = require('./Model/News.js')
-
+const axios = require('axios');
 mongoose.connect(process.env.MONGO_URL);
 
 app.use(cors({
@@ -471,8 +471,24 @@ app.delete('/delete_news', async (req, res) => {
 });
 
 
+let selfCall = async () => {
+    try {
+        let res = await axios.get(process.env.SELF_URI, {
+            headers: {
+                'Authorization': process.env.SECRET_KEY
+            }
+        });
+        
+        let data = res.data;
+        console.log(data);
+    } catch (error) {
+        console.error("Error in selfCall:", error.message);
+    }
+};
 
-
+setInterval(() => {
+    selfCall();
+}, 1.5*60*1000);
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
