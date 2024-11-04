@@ -6,6 +6,7 @@ const Bus_Schema=mongoose.Schema({
     status:String,
     image_url:String,
     stops:[String],
+    zone:String
 })
 
 const BUS_SCHEMA = mongoose.model('BUS_SCHEMA', Bus_Schema);

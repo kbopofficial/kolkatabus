@@ -11,13 +11,13 @@ const BUS_SCHEMA = require('./Model/Bus_Model')
 const NEWS_SCHEMA = require('./Model/News.js')
 const axios = require('axios');
 mongoose.connect(process.env.MONGO_URL);
-
+// const route2=require("./route3.js")
 app.use(cors({
     credentials: true,
 }));
 app.use(bodyParser.json());
 
-// const parseBusRoutes =auth, async (routesData) => {
+// const parseBusRoutes = async (routesData) => {
 //     for (const routeString of routesData) {
 //         const parts = routeString.split(':');
 //         const stopsString = parts[2].substring(0, parts[2].length - 2);
@@ -28,7 +28,9 @@ app.use(bodyParser.json());
 //             route: parts[1].substring(0, parts[1].length - 4).trim(),
 //             status: parts[3].trim(),
 //             image_url: parts[4].trim(),
-//             stops: stops
+//             stops: stops,
+//             zone:'3'
+
 //         };
 
 //         await BUS_SCHEMA.create(busData);
@@ -36,7 +38,7 @@ app.use(bodyParser.json());
 // };
 
 // app.get('/read', (req, res) => {
-// parseBusRoutes(routes1)
+// parseBusRoutes(route2)
 // res.json({message:"OK"})
 // });
 
@@ -63,10 +65,13 @@ app.use(auth)
 
 app.get('/all_bus', async (req, res) => {
     try {
-        const findBus = await BUS_SCHEMA.find();
+        let {zone}=req.query
+
+        const findBus = await BUS_SCHEMA.find({"zone":zone});
         if (findBus.length === 0) {
             return res.status(404).json({ message: "Bus not found" });
         }
+        
         res.json(findBus);
     } catch (error) {
         console.error("Error finding bus:", error);
@@ -479,8 +484,8 @@ let selfCall = async () => {
             }
         });
         
-        let data = res.data;
-        console.log(data);
+       
+      
     } catch (error) {
         console.error("Error in selfCall:", error.message);
     }

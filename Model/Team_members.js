@@ -4,6 +4,9 @@ const Team=mongoose.Schema({
   name:String,
   designation:String,
   image_path:String,
+  insta:String,
+  facebook:String,
+  others:String
 })
 
 const TEAM_SCHEMA = mongoose.model('TEAM_SCHEMA', Team);
