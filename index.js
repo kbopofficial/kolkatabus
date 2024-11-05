@@ -84,9 +84,9 @@ app.post('/add_bus', async (req, res) => {
     const busDetails = req.body;
 
 
-    if (!busDetails.name || !busDetails.route || !busDetails.status || !busDetails.stops || !busDetails.image_url) {
-        return res.status(400).json({ error: "Missing required bus details (name, route, image_url, status, and stops)" });
-    }
+    // if (!busDetails.name || !busDetails.route || !busDetails.status || !busDetails.stops || !busDetails.image_url) {
+    //     return res.status(400).json({ error: "Missing required bus details (name, route, image_url, status, and stops)" });
+    // }
 
     try {
         const newBus = await BUS_SCHEMA.create(busDetails);
@@ -272,7 +272,8 @@ app.put('/update_team_member', async (req, res) => {
     }
 
     try {
-
+//   const up=await TEAM_SCHEMA.updateMany({insta:'',facebook:'',others:''})
+//   res.json("add insta")
         const updatedMember = await TEAM_SCHEMA.findByIdAndUpdate(
             id,
             { $set: updateDetails },
