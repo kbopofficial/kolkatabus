@@ -63,16 +63,72 @@ const auth = (req, res, next) => {
 
 app.use(auth)
 
+// app.get('/same_image', async (req, res) => {
+
+//     try {
+//         // Step 1: Retrieve all buses
+//         const buses = await BUS_SCHEMA.find();
+    
+//         // Step 2: Group buses by name
+//         const busGroups = buses.reduce((acc, bus) => {
+//           acc[bus.name] = acc[bus.name] || [];
+//           acc[bus.name].push(bus);
+//           return acc;
+//         }, {});
+    
+//         // Step 3: Iterate through each group
+//         for (const [name, group] of Object.entries(busGroups)) {
+//           // Check if any bus in the group has an image_url
+//           const busWithImageUrl = group.find(bus => bus.image_url);
+    
+//           if (busWithImageUrl) {
+//             const imageUrl = busWithImageUrl.image_url;
+    
+//             // Update each bus in the group to have the same image_url
+//             // await Promise.all(
+//               group.map(async(bus) => {
+//                 // Only update if the bus doesn't already have an image_url
+//                 // if (!bus.image_url) {
+//                   await BUS_SCHEMA.findByIdAndUpdate(bus._id, { image_url: imageUrl });
+//                 // }
+//               })
+//             // );
+//           }
+//         }
+    
+//         res.json("Image URLs updated successfully");
+//       } catch (error) {
+//         console.error("Error updating image URLs:", error);
+//       }
+
+// })
+
 app.get('/all_bus', async (req, res) => {
     try {
         let {zone}=req.query
-
         const findBus = await BUS_SCHEMA.find({"zone":zone});
         if (findBus.length === 0) {
             return res.status(404).json({ message: "Bus not found" });
         }
         
         res.json(findBus);
+
+    //    let baseurl="https://raw.githubusercontent.com/busrepository/busrepo/main/";
+     
+    //    const buses = await BUS_SCHEMA.find({ image_url: { $exists: true, $ne: '' } });
+
+       
+    //    for (let bus of buses) {
+    //        const updatedImageUrl = baseurl + bus.image_url;
+    //        await BUS_SCHEMA.updateOne(
+    //            { _id: bus._id }, 
+    //            { $set: { image_url: updatedImageUrl } }
+    //        );
+    //    }
+     
+    //         res.json("done")
+        
+
     } catch (error) {
         console.error("Error finding bus:", error);
         res.status(500).json({ error: "Failed to find bus" });
