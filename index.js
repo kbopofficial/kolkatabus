@@ -565,7 +565,7 @@ app.post('/event', async (req, res) => {
     }
 
     try {
-        const event = await Event.create({
+        const event = await EVENT_SCHEMA.create({
             name,
             url,
             image_url,
