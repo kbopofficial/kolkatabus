@@ -550,7 +550,7 @@ app.get('/event', async (req, res) => {
 });
 
 app.post('/event', async (req, res) => {
-    const { name, url, image_url, days = 0, hours = 0, mins = 0 } = req.body;
+    const { name, url, image_url,order, days = 0, hours = 0, mins = 0 } = req.body;
 
     if (!name || !url || !image_url || !order) {
         return res.status(400).json({ error: "Name, URL, and image URL and order are required" });
@@ -644,7 +644,7 @@ let selfCall = async () => {
 };
 
 setInterval(() => {
-    selfCall();
+    // selfCall();
 }, 4 * 60 * 1000);
 
 app.listen(port, () => {
