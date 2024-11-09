@@ -569,6 +569,7 @@ app.post('/event', async (req, res) => {
             name,
             url,
             image_url,
+            order,
             expiresAt: expirationDate
         });
 
