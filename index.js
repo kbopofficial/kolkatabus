@@ -203,10 +203,7 @@ app.get('/via_bus', async (req, res) => {
     if (!via) {
         return res.status(400).json({ error: "Via route is required" });
     }
-    if (!via) {
-        return res.status(400).json({ error: "A 'via' stop must be provided" });
-    }
-
+  
     try {
         const buses = await BUS_SCHEMA.find({
             stops: {
@@ -215,13 +212,13 @@ app.get('/via_bus', async (req, res) => {
         });
 
 
-        const filteredBuses = buses.filter(bus => {
-            const index = bus.stops.indexOf(via);
-            return index > 0 && index < bus.stops.length - 1;
-        });
+        // const filteredBuses = buses.filter(bus => {
+        //     const index = bus.stops.indexOf(via);
+        //     return index > 0 && index < bus.stops.length - 1;
+        // });
 
-        if (filteredBuses.length > 0) {
-            res.json(filteredBuses);
+        if (buses.length > 0) {
+            res.json(buses);
         } else {
             res.status(404).json({ error: "No buses found for the given stop, excluding first and last stops" });
         }
