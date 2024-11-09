@@ -9,6 +9,7 @@ const ADMIN_SCHEMA = require('./Model/Admin')
 const TEAM_SCHEMA = require('./Model/Team_members')
 const BUS_SCHEMA = require('./Model/Bus_Model')
 const NEWS_SCHEMA = require('./Model/News.js')
+const EVENT_SCHEMA = require('./Model/Event.js')
 const axios = require('axios');
 mongoose.connect(process.env.MONGO_URL);
 // const route2=require("./route3.js")
@@ -529,6 +530,88 @@ app.delete('/delete_news', async (req, res) => {
     } catch (error) {
         console.error("Error deleting news:", error);
         res.status(500).json({ error: "Failed to delete news" });
+    }
+});
+
+
+
+
+
+//For EVENT
+app.get('/event', async (req, res) => {
+    try {
+        let event = await EVENT_SCHEMA.find();
+        if(!event){
+            res.json("No event found")
+        }
+        res.json(event)
+
+    } catch (error) {
+        console.error("Error searching event :", error);
+        res.status(500).json({ error: "Error searching event" });
+    }
+});
+
+app.post('/event', async (req, res) => {
+    const eventDetails = req.body;
+
+    if (!eventDetails.image_url || !eventDetails.url || !eventDetails.name) {
+        return res.status(400).json({ error: "Image URL, URL, and name content are required" });
+    }
+
+    try {
+        const newevent = await EVENT_SCHEMA.create(eventDetails);
+
+        res.status(201).json({ message: "event added successfully", event: newevent });
+    } catch (error) {
+        console.error("Error adding event:", error);
+        res.status(500).json({ error: "Failed to add event" });
+    }
+});
+
+
+app.put('/event', async (req, res) => {
+    const { id, ...updateDetails } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ error: "event ID is required" });
+    }
+
+    try {
+        const updatedevent = await EVENT_SCHEMA.findByIdAndUpdate(
+            id,
+            { $set: updateDetails },
+            { new: true, runValidators: true }
+        );
+
+        if (updatedevent) {
+            res.json({ message: "event updated successfully", event: updatedevent });
+        } else {
+            res.status(404).json({ error: "event not found" });
+        }
+    } catch (error) {
+        console.error("Error updating event:", error);
+        res.status(500).json({ error: "Failed to update event" });
+    }
+});
+
+
+app.delete('/event', async (req, res) => {
+    const { id } = req.query;
+    if (!id) {
+        return res.status(400).json({ error: "event ID is required" });
+    }
+    try {
+        const deleteevent = await EVENT_SCHEMA.findByIdAndDelete(id);
+
+        if (deleteevent) {
+            res.json({ message: "event deleted successfully", event: deleteevent });
+        } else {
+            res.status(404).json({ error: "event not found" });
+        }
+    } catch (error) {
+        console.error("Error deleting event:", error);
+        res.status(500).json({ error: "Failed to delete event" });
     }
 });
 
