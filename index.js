@@ -69,22 +69,22 @@ app.use(auth)
 //     try {
 //         // Step 1: Retrieve all buses
 //         const buses = await BUS_SCHEMA.find();
-    
+
 //         // Step 2: Group buses by name
 //         const busGroups = buses.reduce((acc, bus) => {
 //           acc[bus.name] = acc[bus.name] || [];
 //           acc[bus.name].push(bus);
 //           return acc;
 //         }, {});
-    
+
 //         // Step 3: Iterate through each group
 //         for (const [name, group] of Object.entries(busGroups)) {
 //           // Check if any bus in the group has an image_url
 //           const busWithImageUrl = group.find(bus => bus.image_url);
-    
+
 //           if (busWithImageUrl) {
 //             const imageUrl = busWithImageUrl.image_url;
-    
+
 //             // Update each bus in the group to have the same image_url
 //             // await Promise.all(
 //               group.map(async(bus) => {
@@ -96,7 +96,7 @@ app.use(auth)
 //             // );
 //           }
 //         }
-    
+
 //         res.json("Image URLs updated successfully");
 //       } catch (error) {
 //         console.error("Error updating image URLs:", error);
@@ -106,29 +106,29 @@ app.use(auth)
 
 app.get('/all_bus', async (req, res) => {
     try {
-        let {zone}=req.query
-        const findBus = await BUS_SCHEMA.find({"zone":zone});
+        let { zone } = req.query
+        const findBus = await BUS_SCHEMA.find({ "zone": zone });
         if (findBus.length === 0) {
             return res.status(404).json({ message: "Bus not found" });
         }
-        
+
         res.json(findBus);
 
-    //    let baseurl="https://raw.githubusercontent.com/busrepository/busrepo/main/";
-     
-    //    const buses = await BUS_SCHEMA.find({ image_url: { $exists: true, $ne: '' } });
+        //    let baseurl="https://raw.githubusercontent.com/busrepository/busrepo/main/";
 
-       
-    //    for (let bus of buses) {
-    //        const updatedImageUrl = baseurl + bus.image_url;
-    //        await BUS_SCHEMA.updateOne(
-    //            { _id: bus._id }, 
-    //            { $set: { image_url: updatedImageUrl } }
-    //        );
-    //    }
-     
-    //         res.json("done")
-        
+        //    const buses = await BUS_SCHEMA.find({ image_url: { $exists: true, $ne: '' } });
+
+
+        //    for (let bus of buses) {
+        //        const updatedImageUrl = baseurl + bus.image_url;
+        //        await BUS_SCHEMA.updateOne(
+        //            { _id: bus._id }, 
+        //            { $set: { image_url: updatedImageUrl } }
+        //        );
+        //    }
+
+        //         res.json("done")
+
 
     } catch (error) {
         console.error("Error finding bus:", error);
@@ -203,7 +203,7 @@ app.get('/via_bus', async (req, res) => {
     if (!via) {
         return res.status(400).json({ error: "Via route is required" });
     }
-  
+
     try {
         const buses = await BUS_SCHEMA.find({
             stops: {
@@ -326,8 +326,8 @@ app.put('/update_team_member', async (req, res) => {
     }
 
     try {
-//   const up=await TEAM_SCHEMA.updateMany({insta:'',facebook:'',others:''})
-//   res.json("add insta")
+        //   const up=await TEAM_SCHEMA.updateMany({insta:'',facebook:'',others:''})
+        //   res.json("add insta")
         const updatedMember = await TEAM_SCHEMA.findByIdAndUpdate(
             id,
             { $set: updateDetails },
@@ -538,7 +538,7 @@ app.delete('/delete_news', async (req, res) => {
 app.get('/event', async (req, res) => {
     try {
         let event = await EVENT_SCHEMA.find();
-        if(!event){
+        if (!event) {
             res.json("No event found")
         }
         res.json(event)
@@ -550,21 +550,36 @@ app.get('/event', async (req, res) => {
 });
 
 app.post('/event', async (req, res) => {
-    const eventDetails = req.body;
+    const { name, url, image_url, days = 0, hours = 0, mins = 0 } = req.body;
 
-    if (!eventDetails.image_url || !eventDetails.url || !eventDetails.name) {
-        return res.status(400).json({ error: "Image URL, URL, and name content are required" });
+    if (!name || !url || !image_url || !order) {
+        return res.status(400).json({ error: "Name, URL, and image URL and order are required" });
+    }
+
+  
+    let expirationDate = null;
+    if (days || hours || mins) {
+        expirationDate = new Date(
+            Date.now() + days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + mins * 60 * 1000
+        );
     }
 
     try {
-        const newevent = await EVENT_SCHEMA.create(eventDetails);
+        const event = await Event.create({
+            name,
+            url,
+            image_url,
+            expiresAt: expirationDate
+        });
 
-        res.status(201).json({ message: "event added successfully", event: newevent });
+        res.status(201).json({ message: "Event created with expiration timer", event });
     } catch (error) {
-        console.error("Error adding event:", error);
-        res.status(500).json({ error: "Failed to add event" });
+        console.error("Error creating event:", error);
+        res.status(500).json({ error: "Failed to create event" });
     }
 });
+
+
 
 
 app.put('/event', async (req, res) => {
@@ -620,9 +635,9 @@ let selfCall = async () => {
                 'Authorization': process.env.SECRET_KEY
             }
         });
-        
-       
-      
+
+
+
     } catch (error) {
         console.error("Error in selfCall:", error.message);
     }
@@ -630,7 +645,7 @@ let selfCall = async () => {
 
 setInterval(() => {
     selfCall();
-}, 4*60*1000);
+}, 4 * 60 * 1000);
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
