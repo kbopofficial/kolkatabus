@@ -12,7 +12,6 @@ const NEWS_SCHEMA = require('./Model/News.js')
 const EVENT_SCHEMA = require('./Model/Event.js')
 const axios = require('axios');
 mongoose.connect(process.env.MONGO_URL);
-// const route2=require("./route3.js")
 app.use(cors({
     credentials: true,
 }));
