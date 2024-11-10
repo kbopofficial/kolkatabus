@@ -550,27 +550,22 @@ app.get('/event', async (req, res) => {
 });
 
 app.post('/event', async (req, res) => {
-    const { name, url, image_url,order, days = 0, hours = 0, mins = 0 } = req.body;
+    const { name, url, image_url,order, expiresAt } = req.body;
 
-    if (!name || !url || !image_url || !order) {
-        return res.status(400).json({ error: "Name, URL, and image URL and order are required" });
+    if (!name || !url || !image_url) {
+        return res.status(400).json({ error: "Name, URL, or image URL are required" });
     }
-
-  
-    let expirationDate = null;
-    if (days || hours || mins) {
-        expirationDate = new Date(
-            Date.now() + days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + mins * 60 * 1000
-        );
-    }
-
+let expireDate=null;
+  if(expiresAt!=null){
+expireDate=new Date(expiresAt)
+  }
     try {
         const event = await EVENT_SCHEMA.create({
             name,
-            url,
             image_url,
+            url,
             order,
-            expiresAt: expirationDate
+            expiresAt:expireDate
         });
 
         res.status(201).json({ message: "Event created with expiration timer", event });
