@@ -470,7 +470,7 @@ app.get('/all_news', async (req, res) => {
 app.post('/add_news', async (req, res) => {
     const newsDetails = req.body;
 
-    if (!newsDetails.image_url || !newsDetails.url || !newsDetails.news) {
+    if (!newsDetails.image_url || !newsDetails.url || !newsDetails.news || !newsDetails.order) {
         return res.status(400).json({ error: "Image URL, URL, and news content are required" });
     }
 
