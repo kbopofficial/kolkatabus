@@ -10,6 +10,9 @@ const TEAM_SCHEMA = require('./Model/Team_members')
 const BUS_SCHEMA = require('./Model/Bus_Model')
 const NEWS_SCHEMA = require('./Model/News.js')
 const EVENT_SCHEMA = require('./Model/Event.js')
+const About_Schema = require('./Model/About.js')
+const Help_Schema = require('./Model/Help.js')
+
 const axios = require('axios');
 mongoose.connect(process.env.MONGO_URL);
 app.use(cors({
@@ -623,6 +626,178 @@ app.delete('/event', async (req, res) => {
 });
 
 
+
+//About
+app.get('/about', async (req, res) => {
+    try {
+        let about = await About_Schema.find();
+        if (!about) {
+            res.json("No about found")
+        }
+        res.json(about)
+
+    } catch (error) {
+        console.error("Error searching about :", error);
+        res.status(500).json({ error: "Error searching about" });
+    }
+});
+
+app.post('/about', async (req, res) => {
+    const { about,version } = req.body;
+
+    if (!about || !version) {
+        return res.status(400).json({ error: "about or version are required" });
+    }
+
+    try {
+        const about = await About_Schema.create({
+about,
+version
+        });
+
+        res.status(201).json({ message: "about created with expiration timer", about });
+    } catch (error) {
+        console.error("Error creating about:", error);
+        res.status(500).json({ error: "Failed to create about" });
+    }
+});
+
+
+
+
+app.put('/about', async (req, res) => {
+    const { id, ...updateDetails } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ error: "about ID is required" });
+    }
+
+    try {
+        const aboutup = await About_Schema.findByIdAndUpdate(
+            id,
+            { $set: updateDetails },
+            { new: true, runValidators: true }
+        );
+
+        if (aboutup) {
+            res.json({ message: "about updated successfully", about: aboutup });
+        } else {
+            res.status(404).json({ error: "about not found" });
+        }
+    } catch (error) {
+        console.error("Error updating about:", error);
+        res.status(500).json({ error: "Failed to update about" });
+    }
+});
+
+
+app.delete('/about', async (req, res) => {
+    const { id } = req.query;
+    if (!id) {
+        return res.status(400).json({ error: "about ID is required" });
+    }
+    try {
+        const deleteabout = await About_Schema.findByIdAndDelete(id);
+
+        if (deleteabout) {
+            res.json({ message: "about deleted successfully", about: deleteabout });
+        } else {
+            res.status(404).json({ error: "about not found" });
+        }
+    } catch (error) {
+        console.error("Error deleting about:", error);
+        res.status(500).json({ error: "Failed to delete about" });
+    }
+});
+
+
+
+
+
+//Help
+app.get('/help', async (req, res) => {
+    try {
+        let help = await help_Schema.find();
+        if (!help) {
+            res.json("No help found")
+        }
+        res.json(help)
+
+    } catch (error) {
+        console.error("Error searching help :", error);
+        res.status(500).json({ error: "Error searching help" });
+    }
+});
+
+app.post('/help', async (req, res) => {
+    const { help,version } = req.body;
+
+    if (!help || !version) {
+        return res.status(400).json({ error: "help or version are required" });
+    }
+
+    try {
+        const help = await help_Schema.create({
+help,
+version
+        });
+
+        res.status(201).json({ message: "help created with expiration timer", help });
+    } catch (error) {
+        console.error("Error creating help:", error);
+        res.status(500).json({ error: "Failed to create help" });
+    }
+});
+
+
+
+
+app.put('/help', async (req, res) => {
+    const { id, ...updateDetails } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ error: "help ID is required" });
+    }
+
+    try {
+        const helpup = await help_Schema.findByIdAndUpdate(
+            id,
+            { $set: updateDetails },
+            { new: true, runValidators: true }
+        );
+
+        if (helpup) {
+            res.json({ message: "help updated successfully", help: helpup });
+        } else {
+            res.status(404).json({ error: "help not found" });
+        }
+    } catch (error) {
+        console.error("Error updating help:", error);
+        res.status(500).json({ error: "Failed to update help" });
+    }
+});
+
+
+app.delete('/help', async (req, res) => {
+    const { id } = req.query;
+    if (!id) {
+        return res.status(400).json({ error: "help ID is required" });
+    }
+    try {
+        const deletehelp = await help_Schema.findByIdAndDelete(id);
+
+        if (deletehelp) {
+            res.json({ message: "help deleted successfully", help: deletehelp });
+        } else {
+            res.status(404).json({ error: "help not found" });
+        }
+    } catch (error) {
+        console.error("Error deleting help:", error);
+        res.status(500).json({ error: "Failed to delete help" });
+    }
+});
+
+
 let selfCall = async () => {
     try {
         let res = await axios.get(process.env.SELF_URI, {
@@ -639,8 +814,8 @@ let selfCall = async () => {
 };
 
 setInterval(() => {
-    // selfCall();
-}, 4 * 60 * 1000);
+    selfCall();
+}, 7 * 60 * 1000);
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
