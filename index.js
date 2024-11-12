@@ -64,7 +64,7 @@ const auth = (req, res, next) => {
     }
 };
 
-// app.use(auth)
+app.use(auth)
 
 // app.get('/same_image', async (req, res) => {
 
@@ -785,7 +785,7 @@ app.delete('/help', async (req, res) => {
     }
     try {
         const deletehelp = await Help_Schema.findByIdAndDelete(id);
-        
+
 
         if (deletehelp) {
             res.json({ message: "help deleted successfully", help: deletehelp });
