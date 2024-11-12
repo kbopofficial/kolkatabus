@@ -64,7 +64,7 @@ const auth = (req, res, next) => {
     }
 };
 
-app.use(auth)
+// app.use(auth)
 
 // app.get('/same_image', async (req, res) => {
 
@@ -650,12 +650,12 @@ app.post('/about', async (req, res) => {
     }
 
     try {
-        const about = await About_Schema.create({
+        const createabout = await About_Schema.create({
 about,
 version
         });
 
-        res.status(201).json({ message: "about created with expiration timer", about });
+        res.status(201).json({ message: "about created", createabout });
     } catch (error) {
         console.error("Error creating about:", error);
         res.status(500).json({ error: "Failed to create about" });
@@ -717,7 +717,7 @@ app.delete('/about', async (req, res) => {
 //Help
 app.get('/help', async (req, res) => {
     try {
-        let help = await help_Schema.find();
+        let help = await Help_Schema.find();
         if (!help) {
             res.json("No help found")
         }
@@ -730,19 +730,19 @@ app.get('/help', async (req, res) => {
 });
 
 app.post('/help', async (req, res) => {
-    const { help,version } = req.body;
+    const { info,url } = req.body;
 
-    if (!help || !version) {
+    if (!info || !url) {
         return res.status(400).json({ error: "help or version are required" });
     }
 
     try {
-        const help = await help_Schema.create({
-help,
-version
+        const createhelp = await Help_Schema.create({
+info,
+url
         });
 
-        res.status(201).json({ message: "help created with expiration timer", help });
+        res.status(201).json({ message: "help created", createhelp });
     } catch (error) {
         console.error("Error creating help:", error);
         res.status(500).json({ error: "Failed to create help" });
@@ -760,7 +760,7 @@ app.put('/help', async (req, res) => {
     }
 
     try {
-        const helpup = await help_Schema.findByIdAndUpdate(
+        const helpup = await Help_Schema.findByIdAndUpdate(
             id,
             { $set: updateDetails },
             { new: true, runValidators: true }
@@ -784,7 +784,8 @@ app.delete('/help', async (req, res) => {
         return res.status(400).json({ error: "help ID is required" });
     }
     try {
-        const deletehelp = await help_Schema.findByIdAndDelete(id);
+        const deletehelp = await Help_Schema.findByIdAndDelete(id);
+        
 
         if (deletehelp) {
             res.json({ message: "help deleted successfully", help: deletehelp });
